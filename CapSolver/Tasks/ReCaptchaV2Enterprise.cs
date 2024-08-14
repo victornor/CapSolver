@@ -55,6 +55,12 @@ public class ReCaptchaV2Enterprise : ITask, IProxyTask, IUserAgentTask, ICookieT
     public string? Cookies { get; set; }
 
     /// <summary>
+    /// Optional anchor token to be supplied for the reCAPTCHA Enterprise task.
+    /// </summary>
+    [JsonProperty("anchor", NullValueHandling = NullValueHandling.Ignore)]
+    public string? Anchor { get; set; }
+
+    /// <summary>
     /// Prepare a ReCaptchaV2 Enterprise task.
     /// </summary>
     /// <param name="websiteUrl">Address of a webpage with Google ReCaptcha</param>
@@ -70,7 +76,8 @@ public class ReCaptchaV2Enterprise : ITask, IProxyTask, IUserAgentTask, ICookieT
                                  object? enterprisePayload = null,
                                  string? apiDomain = null,
                                  string? userAgent = null,
-                                 string? cookies= null)
+                                 string? cookies= null,
+                                 string? anchor = null)
     {
         WebsiteUrl = websiteUrl;
         WebsiteKey = websiteKey;
@@ -78,5 +85,6 @@ public class ReCaptchaV2Enterprise : ITask, IProxyTask, IUserAgentTask, ICookieT
         ApiDomain = apiDomain;
         UserAgent = userAgent;
         Cookies = cookies;
+        Anchor = anchor;
     }
 }

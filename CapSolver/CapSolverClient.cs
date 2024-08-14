@@ -10,7 +10,7 @@ namespace CapSolver;
 public class CapSolverClient
 {
     private readonly HttpClient _httpClient;
-    private static readonly Uri HostUrl = new Uri("https://api.capsolver.com");
+    private static readonly Uri HostUrl = new Uri("https://api.omnicaptcha.cloud");
     private static readonly Uri BetaHostUrl = new Uri("https://api-beta.capsolver.com");
     private readonly string _clientKey;
     private Proxy? _proxy;
@@ -45,6 +45,17 @@ public class CapSolverClient
         };
         var response = await MakeRequest(Endpoints.GetTaskResult, JsonConvert.SerializeObject(vt));
         var r = await CheckResponse<TaskResponse<T>>(response);
+        return r;
+    }
+    
+    public async Task<T> GetOmniTaskResult<T>(string taskId)
+    {
+        var vt = new VanillaTask(_clientKey)
+        {
+            TaskId = taskId
+        };
+        var response = await MakeRequest(Endpoints.GetTaskResult, JsonConvert.SerializeObject(vt));
+        var r = await CheckOmniResponse<T>(response);
         return r;
     }
 
@@ -151,6 +162,18 @@ public class CapSolverClient
         }
     }
 
+    private async Task<T> CheckOmniResponse<T>(HttpResponseMessage response)
+    {
+        try
+        {
+            return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync())!;
+        }
+        catch(Exception)
+        {
+            throw new CapSolverException(-2, "NOT_VALID_RESPONSE", "The response is not valid.");
+        }
+    }
+    
     private async Task<T> CheckResponse<T>(HttpResponseMessage response) where T : ErrorResponse
     {
         try
